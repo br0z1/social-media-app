@@ -1,0 +1,54 @@
+[
+  {
+    "id": "1743645344181",
+    "author": {
+      "id": "edgar",
+      "username": "edgar",
+      "profileImage": "/assets/profiles/default.jpg"
+    },
+    "content": "test",
+    "mediaFiles": [
+      {
+        "url": "/uploads/1743645344162-coaching moment.jpg",
+        "type": "image"
+      }
+    ],
+    "location": null,
+    "likes": 0,
+    "comments": [],
+    "timestamp": "2025-04-03T01:55:44.181Z"
+  },
+  {
+    "id": "1743645359303",
+    "author": {
+      "id": "edgar",
+      "username": "edgar",
+      "profileImage": "/assets/profiles/default.jpg"
+    },
+    "content": "test",
+    "mediaFiles": [
+      {
+        "url": "/uploads/1743645359291-coaching moment.jpg",
+        "type": "image"
+      }
+    ],
+    "location": null,
+    "likes": 0,
+    "comments": [],
+    "timestamp": "2025-04-03T01:55:59.303Z"
+  },
+  {
+    "id": "1743645529295",
+    "author": {
+      "id": "edgar",
+      "username": "edgar",
+      "profileImage": "/assets/profiles/default.jpg"
+    },
+    "content": "test 2",
+    "mediaFiles": [],
+    "location": null,
+    "likes": 0,
+    "comments": [],
+    "timestamp": "2025-04-03T01:58:49.295Z"
+  }
+]

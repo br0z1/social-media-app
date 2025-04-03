@@ -1,0 +1,138 @@
+import { useEffect, useRef, useCallback } from 'react';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+import { Box } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import MapTileService from '../services/mapTileService';
+
+// Custom styled container to match post styling
+const MapContainer = styled(Box)({
+  width: '100%',
+  height: '120px',
+  position: 'relative',
+  backgroundColor: '#f8f9fa', // Light background while loading
+  '& .leaflet-container': {
+    width: '100%',
+    height: '100%',
+    zIndex: 1,
+  },
+  '& .leaflet-control-container': {
+    zIndex: 2,
+  },
+  '& .leaflet-control-zoom': {
+    border: 'none !important',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+  },
+  '& .leaflet-control-zoom-in, & .leaflet-control-zoom-out': {
+    backgroundColor: 'white !important',
+    color: '#8BC2A9 !important',
+    '&:hover': {
+      backgroundColor: '#f5f5f5 !important',
+    },
+  },
+});
+
+interface LocationMapViewProps {
+  coordinates: {
+    lat: number;
+    lng: number;
+  };
+}
+
+export const LocationMapView = ({ coordinates }: LocationMapViewProps) => {
+  const mapRef = useRef<L.Map | null>(null);
+  const markerRef = useRef<L.Marker | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const isInitializedRef = useRef(false);
+  const resizeTimeoutRef = useRef<number | null>(null);
+  const initTimeoutRef = useRef<number | null>(null);
+  const tileLayerRef = useRef<L.TileLayer | null>(null);
+  const isInitializingRef = useRef(false);
+
+  const cleanupMap = useCallback(() => {
+    if (resizeTimeoutRef.current) {
+      window.clearTimeout(resizeTimeoutRef.current);
+      resizeTimeoutRef.current = null;
+    }
+    if (initTimeoutRef.current) {
+      window.clearTimeout(initTimeoutRef.current);
+      initTimeoutRef.current = null;
+    }
+    if (markerRef.current) {
+      markerRef.current.remove();
+      markerRef.current = null;
+    }
+    if (tileLayerRef.current) {
+      tileLayerRef.current.remove();
+      tileLayerRef.current = null;
+    }
+    if (mapRef.current) {
+      mapRef.current.remove();
+      mapRef.current = null;
+    }
+    isInitializedRef.current = false;
+    isInitializingRef.current = false;
+  }, []);
+
+  useEffect(() => {
+    const initializeMap = async () => {
+      if (!containerRef.current || isInitializedRef.current) return;
+
+      try {
+        console.log('Initializing map...');
+        isInitializedRef.current = true;
+
+        // Create map with explicit dimensions
+        const map = L.map(containerRef.current as HTMLElement, {
+          center: [coordinates.lat, coordinates.lng],
+          zoom: 13,
+          zoomControl: false,
+          dragging: false,
+          scrollWheelZoom: false,
+          attributionControl: false,
+        });
+
+        // Add tile layer with explicit options
+        const mapService = MapTileService.getInstance();
+        const tileLayer = mapService.createTileLayer();
+        tileLayer.addTo(map);
+        tileLayerRef.current = tileLayer;
+
+        // Add marker
+        const marker = L.marker([coordinates.lat, coordinates.lng], {
+          icon: L.divIcon({
+            className: 'custom-marker',
+            html: '<div class="marker-dot"></div>',
+            iconSize: [12, 12],
+            iconAnchor: [6, 6],
+          }),
+        }).addTo(map);
+
+        mapRef.current = map;
+
+        // Force a resize after a short delay to ensure tiles load
+        setTimeout(() => {
+          map.invalidateSize();
+        }, 100);
+
+      } catch (error) {
+        console.error('Error initializing map:', error);
+        isInitializedRef.current = false;
+      }
+    };
+
+    initializeMap();
+
+    return () => {
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null;
+      }
+      isInitializedRef.current = false;
+    };
+  }, [coordinates]);
+
+  return <MapContainer ref={containerRef} />;
+};
+
+export default LocationMapView; 
