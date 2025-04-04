@@ -1,54 +1,42 @@
 [
   {
-    "id": "1743645344181",
+    "id": "1743796587996",
     "author": {
       "id": "edgar",
       "username": "edgar",
       "profileImage": "/assets/profiles/default.jpg"
     },
     "content": "test",
-    "mediaFiles": [
-      {
-        "url": "/uploads/1743645344162-coaching moment.jpg",
-        "type": "image"
-      }
-    ],
-    "location": null,
-    "likes": 0,
-    "comments": [],
-    "timestamp": "2025-04-03T01:55:44.181Z"
-  },
-  {
-    "id": "1743645359303",
-    "author": {
-      "id": "edgar",
-      "username": "edgar",
-      "profileImage": "/assets/profiles/default.jpg"
-    },
-    "content": "test",
-    "mediaFiles": [
-      {
-        "url": "/uploads/1743645359291-coaching moment.jpg",
-        "type": "image"
-      }
-    ],
-    "location": null,
-    "likes": 0,
-    "comments": [],
-    "timestamp": "2025-04-03T01:55:59.303Z"
-  },
-  {
-    "id": "1743645529295",
-    "author": {
-      "id": "edgar",
-      "username": "edgar",
-      "profileImage": "/assets/profiles/default.jpg"
-    },
-    "content": "test 2",
     "mediaFiles": [],
-    "location": null,
+    "location": {
+      "coordinates": {
+        "lat": 40.785277680177025,
+        "lng": -73.96888732910158
+      },
+      "name": "Current Location"
+    },
     "likes": 0,
     "comments": [],
-    "timestamp": "2025-04-03T01:58:49.295Z"
+    "timestamp": "2025-04-04T19:56:27.996Z"
+  },
+  {
+    "id": "1743797019029",
+    "author": {
+      "id": "edgar",
+      "username": "edgar",
+      "profileImage": "/assets/profiles/default.jpg"
+    },
+    "content": "asdfasdfasdf",
+    "mediaFiles": [],
+    "location": {
+      "coordinates": {
+        "lat": 40.724763921034736,
+        "lng": -73.99137496948244
+      },
+      "name": "Current Location"
+    },
+    "likes": 0,
+    "comments": [],
+    "timestamp": "2025-04-04T20:03:39.029Z"
   }
 ]

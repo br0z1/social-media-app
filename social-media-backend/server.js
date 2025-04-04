@@ -66,6 +66,27 @@ app.get('/api/posts', (req, res) => {
   res.json(posts);
 });
 
+// Add purge endpoint
+app.delete('/api/posts/purge', (req, res) => {
+  console.log('Purging all posts...');
+  posts = [];
+  savePosts();
+  
+  // Also delete all uploaded files
+  const uploadsDir = path.join(__dirname, 'uploads');
+  if (fs.existsSync(uploadsDir)) {
+    fs.readdirSync(uploadsDir).forEach(file => {
+      const filePath = path.join(uploadsDir, file);
+      if (file !== '.gitkeep') { // Don't delete .gitkeep
+        fs.unlinkSync(filePath);
+      }
+    });
+  }
+  
+  console.log('All posts and uploads purged');
+  res.json({ message: 'All posts purged successfully' });
+});
+
 app.post('/api/posts', upload.array('media'), (req, res) => {
   console.log('Received POST request to /api/posts');
   console.log('Request body:', req.body);
@@ -87,10 +108,7 @@ app.post('/api/posts', upload.array('media'), (req, res) => {
       },
       content,
       mediaFiles,
-      location: location ? {
-        coordinates: JSON.parse(location),
-        name: 'Current Location'
-      } : null,
+      location: location ? JSON.parse(location) : null,
       likes: 0,
       comments: [],
       timestamp: new Date().toISOString()
