@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { styled } from '@mui/material/styles';
@@ -20,11 +20,12 @@ const MapContainer = styled('div')({
   backgroundColor: '#f0f0f0',
 });
 
+// Fixed green dot that stays in the center
 const GreenDot = styled('div')({
   position: 'absolute',
-  top: '18%',
+  top: '50%',
   left: '50%',
-  transform: 'translateX(-50%)',
+  transform: 'translate(-50%, -50%)',
   width: '18px',
   height: '18px',
   backgroundColor: '#8BC2A9',
@@ -32,6 +33,7 @@ const GreenDot = styled('div')({
   border: '3px solid white',
   boxShadow: '0 0 8px rgba(0,0,0,0.3)',
   zIndex: 999999,
+  pointerEvents: 'none', // Ensures the dot doesn't interfere with map interaction
 });
 
 interface LocationMapSelectorProps {
@@ -41,89 +43,92 @@ interface LocationMapSelectorProps {
   ref?: React.RefObject<{ getCurrentCenter: () => { lat: number; lng: number } }>;
 }
 
-export const LocationMapSelector = React.forwardRef<{ getCurrentCenter: () => { lat: number; lng: number } }, LocationMapSelectorProps>(
-  ({ onLocationSelect, defaultCenter, isVisible = true }, ref) => {
-    const mapRef = useRef<L.Map | null>(null);
-    const containerRef = useRef<HTMLDivElement>(null);
-    const isInitializedRef = useRef(false);
-    const tileLayerRef = useRef<L.TileLayer | null>(null);
+export const LocationMapSelector = React.memo(
+  React.forwardRef<{ getCurrentCenter: () => { lat: number; lng: number } }, LocationMapSelectorProps>(
+    ({ onLocationSelect, defaultCenter, isVisible = true }, ref) => {
+      const mapRef = useRef<L.Map | null>(null);
+      const containerRef = useRef<HTMLDivElement>(null);
+      const [position, setPosition] = useState(defaultCenter);
+      const initializationFlag = useRef(false);
 
-    // Function to get the current center coordinates
-    const getCurrentCenter = () => {
-      if (mapRef.current) {
-        const center = mapRef.current.getCenter();
-        return { lat: center.lat, lng: center.lng };
-      }
-      return defaultCenter;
-    };
-
-    // Expose getCurrentCenter to parent component
-    React.useImperativeHandle(ref, () => ({
-      getCurrentCenter
-    }));
-
-    useEffect(() => {
-      const initializeMap = async () => {
-        if (!containerRef.current || isInitializedRef.current) return;
-
-        try {
-          console.log('Initializing map...');
-          isInitializedRef.current = true;
-
-          // Create map with explicit dimensions
-          const map = L.map(containerRef.current as HTMLElement, {
-            center: [defaultCenter.lat, defaultCenter.lng],
-            zoom: 13,
-            zoomControl: true,
-            dragging: true,
-            scrollWheelZoom: true,
-            attributionControl: false,
-          });
-
-          // Add tile layer with explicit options
-          const mapService = MapTileService.getInstance();
-          const tileLayer = mapService.createTileLayer();
-          tileLayer.addTo(map);
-          tileLayerRef.current = tileLayer;
-
-          mapRef.current = map;
-
-          // Update location when map moves
-          map.on('moveend', () => {
-            const center = map.getCenter();
-            onLocationSelect({ lat: center.lat, lng: center.lng });
-          });
-
-          // Force a resize after a short delay to ensure tiles load
-          setTimeout(() => {
-            map.invalidateSize();
-          }, 100);
-
-        } catch (error) {
-          console.error('Error initializing map:', error);
-          isInitializedRef.current = false;
-        }
-      };
-
-      if (isVisible) {
-        // Small delay to ensure container is ready
-        setTimeout(initializeMap, 100);
-      }
-
-      return () => {
+      // Function to get the current center coordinates
+      const getCurrentCenter = () => {
         if (mapRef.current) {
-          mapRef.current.remove();
-          mapRef.current = null;
+          const center = mapRef.current.getCenter();
+          return { lat: center.lat, lng: center.lng };
         }
-        isInitializedRef.current = false;
+        return position;
       };
-    }, [isVisible]);
 
-    return (
-      <MapWrapper>
-        <MapContainer ref={containerRef} />
-        <GreenDot />
-      </MapWrapper>
-    );
-  }
-); 
+      // Expose getCurrentCenter to parent component
+      React.useImperativeHandle(ref, () => ({
+        getCurrentCenter
+      }));
+
+      useEffect(() => {
+        // Only initialize the map once
+        if (!containerRef.current || initializationFlag.current || mapRef.current) return;
+
+        console.log('🗺️ Initializing map for the first time');
+        initializationFlag.current = true;
+
+        // Create map
+        const map = L.map(containerRef.current, {
+          center: [defaultCenter.lat, defaultCenter.lng],
+          zoom: 13,
+          zoomControl: true,
+          dragging: true,
+          scrollWheelZoom: true,
+          attributionControl: false,
+        });
+
+        // Add tile layer
+        const mapService = MapTileService.getInstance();
+        const tileLayer = mapService.createTileLayer();
+        tileLayer.addTo(map);
+
+        // Add moveend event listener
+        map.on('moveend', () => {
+          const center = map.getCenter();
+          const newPosition = { lat: center.lat, lng: center.lng };
+          setPosition(newPosition);
+          onLocationSelect(newPosition);
+        });
+
+        mapRef.current = map;
+
+        // Force a resize to ensure proper rendering
+        setTimeout(() => {
+          map.invalidateSize();
+        }, 100);
+
+        // Cleanup
+        return () => {
+          console.log('🧹 Cleaning up map instance - full cleanup');
+          map.remove();
+          mapRef.current = null;
+          initializationFlag.current = false;
+        };
+      }, []); // Empty dependency array since we only want to initialize once
+
+      // Handle visibility changes
+      useEffect(() => {
+        if (mapRef.current) {
+          setTimeout(() => {
+            mapRef.current?.invalidateSize();
+          }, 100);
+        }
+      }, [isVisible]);
+
+      return (
+        <MapWrapper>
+          <MapContainer ref={containerRef} />
+          <GreenDot />
+        </MapWrapper>
+      );
+    }
+  )
+);
+
+// Add display name for debugging
+LocationMapSelector.displayName = 'LocationMapSelector'; 

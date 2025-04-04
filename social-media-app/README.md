@@ -58,6 +58,177 @@ export default tseslint.config({
 ## Overview
 Your Sphere is a social media app that focuses on location-based content sharing. Users can create posts with images, text, and location information, creating a geographically connected social experience.
 
+## Tech Stack
+
+### Frontend
+- React + TypeScript
+- Vite for build tooling
+- Material-UI for components
+- Leaflet for maps
+- Context API for state management
+
+### Backend
+- Node.js + Express
+- MongoDB for database
+- Multer for file uploads
+- JWT for authentication
+
+### Infrastructure
+- Netlify for frontend hosting
+- Render for backend hosting
+- MongoDB Atlas for database hosting
+
+## Current Functionality
+
+### 1. User Authentication
+- User registration and login
+- JWT-based session management
+- Protected routes
+- Profile management
+
+### 2. Core Components
+
+#### Navigation
+- **Top Bar (Navbar)**
+  - Profile icon and messages icon
+  - Fixed position, light green background
+  - Responsive design
+
+- **Bottom Bar (BottomBar)**
+  - "YOUR SPHERE" branding
+  - Location display
+  - Floating action button for post creation
+  - Fixed position, light green background
+
+#### Posts
+Each post in the feed consists of:
+- Image section (main content)
+- Profile information and interaction bar
+- Text content section (expandable if longer than 3 lines)
+- Location section with interactive map
+- Like and comment counters
+
+### 3. Data Structure
+
+#### Post Data
+```typescript
+{
+  id: string;                    // Unique identifier
+  author: {
+    id: string;                  // User ID
+    username: string;            // Username
+    profileImage: string;        // Profile picture URL
+  };
+  content: string;               // Post text
+  mediaFiles: Array<{           // Media files
+    url: string;                // File URL
+    type: 'image' | 'video';    // Media type
+  }>;
+  location?: {                   // Location info (optional)
+    coordinates: {
+      lat: number;              // Latitude
+      lng: number;              // Longitude
+    };
+    name: string;               // Location name
+  };
+  likes: number;                 // Number of likes
+  comments: any[];               // Comments array
+  timestamp: string;             // Post creation time
+}
+```
+
+### 4. Features
+
+#### Post Creation
+- Text content input
+- Multiple image/video upload
+- Location selection via interactive map
+- Image compression for large files
+- Form validation
+
+#### Location Maps
+- Interactive map for location selection
+- Default to Manhattan (40.7128, -74.0060) when no location selected
+- Leaflet integration with OpenStreetMap
+- Custom green markers
+- Non-interactive preview in posts
+
+#### Media Handling
+- Support for multiple images/videos
+- Automatic image compression
+- File type validation
+- Secure file storage
+
+### 5. Current Implementation Status
+
+#### Completed
+- User authentication system
+- Post creation and display
+- Location selection and display
+- Basic media upload
+- Responsive design
+- Real-time feed updates
+
+#### In Progress
+- Image upload optimization
+- Location data persistence
+- Comment system implementation
+- Like functionality
+- Profile customization
+
+#### Pending
+- Real-time notifications
+- Advanced search functionality
+- User following system
+- Direct messaging
+- Advanced media editing
+
+### 6. Technical Implementation Details
+
+#### Map System
+- **MapTileService**: Manages map tile loading and caching
+- **LocationMapSelector**: Interactive map for location selection
+- **LocationMapView**: Non-interactive map display in posts
+- Default location handling
+- Custom marker styling
+
+#### State Management
+- Context API for global state
+- Local state for component-specific data
+- Real-time updates through API polling
+
+#### API Integration
+- RESTful endpoints for all operations
+- FormData for file uploads
+- JWT authentication
+- Error handling and validation
+
+### 7. Development Environment
+- Local development server
+- Environment variable configuration
+- TypeScript type checking
+- ESLint for code quality
+- Hot module replacement
+
+## Deployment
+- Frontend deployed to Netlify
+- Backend deployed to Render
+- MongoDB Atlas for database
+- Environment-specific configuration
+- Continuous deployment setup
+
+## Future Roadmap
+1. Complete media upload optimization
+2. Implement comment system
+3. Add like functionality
+4. Enhance profile features
+5. Implement real-time updates
+6. Add advanced search
+7. Develop messaging system
+8. Add user following
+9. Implement notifications
+10. Add media editing tools
+
 ## App Structure
 
 ### 1. Core Components

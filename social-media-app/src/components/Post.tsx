@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Box, Typography, IconButton, Avatar, Paper } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
@@ -6,6 +6,8 @@ import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import type { Post as PostType } from '../types';
 import LocationMapView from './LocationMapView';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 // Styled components with responsive dimensions
 const PostContainer = styled(Paper)(({ theme }) => ({
@@ -80,9 +82,25 @@ interface PostProps {
 const MAX_LINES = 3;
 const LINE_HEIGHT = 1.5;
 
-export default function Post({ post }: PostProps) {
+const Post = ({ post }: PostProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   
+  // Enhanced debugging for post data
+  useEffect(() => {
+    console.log('📝 Post render:', {
+      id: post.id,
+      content: post.content,
+      hasLocation: !!post.location,
+      rawLocation: post.location,
+      coordinates: post.location?.coordinates,
+      locationStructure: post.location && {
+        keys: Object.keys(post.location),
+        coordinateKeys: post.location.coordinates ? Object.keys(post.location.coordinates) : null,
+        isDoubleNested: !!(post.location.coordinates && 'coordinates' in post.location.coordinates)
+      }
+    });
+  }, [post]);
+
   // Calculate if text needs "See more" button
   const textRef = document.createElement('div');
   textRef.style.width = '100%';
@@ -97,10 +115,14 @@ export default function Post({ post }: PostProps) {
   // Get the first media file URL if available
   const mediaUrl = post.mediaFiles?.[0]?.url;
 
+  console.log('Post data:', post);
+  console.log('Post location:', post.location);
+  console.log('Post coordinates:', post.location?.coordinates);
+
   return (
     <PostContainer elevation={0}>
       <ImageSection>
-        {mediaUrl && <img src={`http://localhost:3001${mediaUrl}`} alt="Post content" />}
+        {mediaUrl && <img src={`${API_URL}${mediaUrl}`} alt="Post content" />}
         <OverlayBar>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Avatar 
@@ -160,20 +182,25 @@ export default function Post({ post }: PostProps) {
         )}
       </TextSection>
 
-      {post.location && (
-        <LocationSection>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <LocationOnIcon />
-            <Typography 
-              variant="body2" 
-              className="location-name"
-            >
-              {post.location.name}
-            </Typography>
-          </Box>
-          <LocationMapView coordinates={post.location.coordinates} />
-        </LocationSection>
-      )}
+      <LocationSection>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <LocationOnIcon />
+          <Typography 
+            variant="body2" 
+            className="location-name"
+          >
+            {post.location?.name || 'New York City'}
+          </Typography>
+        </Box>
+        <LocationMapView coordinates={
+          // Handle potential double nesting while maintaining type safety
+          ('coordinates' in (post.location?.coordinates || {})) 
+            ? (post.location?.coordinates as any).coordinates 
+            : post.location?.coordinates
+        } />
+      </LocationSection>
     </PostContainer>
   );
-} 
+};
+
+export default Post; 

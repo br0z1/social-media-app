@@ -99,6 +99,7 @@ export default function CreatePostModal({ open, onClose }: CreatePostModalProps)
   const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const mapRef = useRef<{ getCurrentCenter: () => { lat: number; lng: number } }>(null);
+  const [selectedLocation, setSelectedLocation] = useState<{ lat: number; lng: number } | null>(null);
 
   const isValid = mediaFiles.length > 0 || content.trim().length > 0;
 
@@ -160,10 +161,34 @@ export default function CreatePostModal({ open, onClose }: CreatePostModalProps)
       });
       formData.append('content', content);
       
+      // Get coordinates from the map
       const center = mapRef.current?.getCurrentCenter();
-      if (center) {
-        formData.append('location', JSON.stringify(center));
+      console.log('🎯 Raw coordinates from map:', center);
+      
+      if (center && typeof center.lat === 'number' && typeof center.lng === 'number') {
+        // Create location data with proper structure
+        const locationData = {
+          coordinates: {
+            lat: center.lat,
+            lng: center.lng
+          },
+          name: 'Current Location'  // Changed from 'Selected Location' to match existing pattern
+        };
+        
+        console.log('📍 Location data being sent:', locationData);
+        formData.append('location', JSON.stringify(locationData));
+      } else {
+        console.warn('⚠️ No valid coordinates available for post');
       }
+
+      // Log the full form data
+      const locationJson = formData.get('location');
+      console.log('📦 Form data contents:', {
+        content,
+        mediaFiles: mediaFiles.length,
+        hasLocation: !!locationJson,
+        locationData: locationJson ? JSON.parse(locationJson as string) : null
+      });
 
       const response = await fetch(`${API_URL}/api/posts`, {
         method: 'POST',
@@ -175,10 +200,13 @@ export default function CreatePostModal({ open, onClose }: CreatePostModalProps)
         throw new Error(errorData.error || 'Failed to create post');
       }
 
+      const responseData = await response.json();
+      console.log('✅ Post created successfully:', responseData);
+
       await refreshPosts();
       handleClose();
     } catch (error: any) {
-      console.error('Error creating post:', error);
+      console.error('❌ Error creating post:', error);
       alert('Failed to create post: ' + error.message);
     } finally {
       setIsLoading(false);
@@ -251,9 +279,13 @@ export default function CreatePostModal({ open, onClose }: CreatePostModalProps)
         />
 
         <LocationMapSelector
-          onLocationSelect={() => {}}
+          onLocationSelect={(location) => {
+            console.log('Location selected:', location);
+            setSelectedLocation(location);
+          }}
           defaultCenter={{ lat: 40.7128, lng: -74.0060 }}
           isVisible={open}
+          ref={mapRef}
         />
 
         <Button
