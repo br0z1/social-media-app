@@ -60,6 +60,30 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
+// Beta access code (Alexander the Great's birth year + first letter of his name)
+const BETA_ACCESS_CODE = '356A';
+const ADMIN_RESET_CODE = 'ALEXANDER';
+
+// Add this before your existing routes
+app.post('/api/verify-beta-code', (req, res) => {
+  const { code } = req.body;
+  
+  if (!code) {
+    return res.status(400).json({ success: false, error: 'Code is required' });
+  }
+
+  const upperCode = code.toUpperCase();
+  
+  if (upperCode === ADMIN_RESET_CODE) {
+    // This is the admin reset code - force all users to re-enter
+    res.json({ success: true, reset: true });
+  } else if (upperCode === BETA_ACCESS_CODE) {
+    res.json({ success: true });
+  } else {
+    res.status(401).json({ success: false, error: 'Invalid code' });
+  }
+});
+
 // Routes
 app.get('/api/posts', (req, res) => {
   console.log('GET /api/posts - Current posts:', posts);

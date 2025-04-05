@@ -1,1 +1,22 @@
-[]
+[
+  {
+    "id": "1743889794438",
+    "author": {
+      "id": "edgar",
+      "username": "edgar",
+      "profileImage": "/assets/profiles/default.jpg"
+    },
+    "content": "test",
+    "mediaFiles": [],
+    "location": {
+      "coordinates": {
+        "lat": 40.71278477995827,
+        "lng": -74.00596618652345
+      },
+      "name": "Current Location"
+    },
+    "likes": 0,
+    "comments": [],
+    "timestamp": "2025-04-05T21:49:54.438Z"
+  }
+]
