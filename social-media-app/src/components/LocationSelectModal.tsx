@@ -69,7 +69,7 @@ const MapContainer = styled('div')({
 });
 
 // Fixed green circle that stays in the center
-const GreenCircle = styled('div')(({ theme }) => ({
+const GreenCircle = styled('div')({
   position: 'absolute',
   top: '50%',
   left: '50%',
@@ -81,7 +81,7 @@ const GreenCircle = styled('div')(({ theme }) => ({
   boxSizing: 'border-box',
   pointerEvents: 'none', // Ensures the circle doesn't interfere with map interaction
   zIndex: 999,
-}));
+});
 
 const LocationLabel = styled(Box)({
   position: 'absolute',
