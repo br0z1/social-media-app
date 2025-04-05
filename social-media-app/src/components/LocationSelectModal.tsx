@@ -105,7 +105,6 @@ export default function LocationSelectModal({ open, onClose, onLocationSelect }:
   const [neighborhood, setNeighborhood] = useState('');
   const [initAttempts, setInitAttempts] = useState(0);
   const currentZoomRef = useRef(13);
-  const [displayZoom, setDisplayZoom] = useState(13);
   const [tileWarning, setTileWarning] = useState(false);
   const [neighborhoodInfo, setNeighborhoodInfo] = useState<NeighborhoodInfo | null>(null);
   
@@ -214,7 +213,6 @@ export default function LocationSelectModal({ open, onClose, onLocationSelect }:
         const zoom = map.getZoom();
         console.log('🔍 Zoom level changed to:', zoom);
         currentZoomRef.current = zoom;
-        setDisplayZoom(zoom);
         updateNeighborhood(map.getCenter());
       });
       

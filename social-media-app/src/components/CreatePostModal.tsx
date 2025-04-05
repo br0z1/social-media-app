@@ -99,7 +99,6 @@ export default function CreatePostModal({ open, onClose }: CreatePostModalProps)
   const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const mapRef = useRef<{ getCurrentCenter: () => { lat: number; lng: number } }>(null);
-  const [selectedLocation, setSelectedLocation] = useState<{ lat: number; lng: number } | null>(null);
 
   const isValid = mediaFiles.length > 0 || content.trim().length > 0;
 
@@ -281,7 +280,6 @@ export default function CreatePostModal({ open, onClose }: CreatePostModalProps)
         <LocationMapSelector
           onLocationSelect={(location) => {
             console.log('Location selected:', location);
-            setSelectedLocation(location);
           }}
           defaultCenter={{ lat: 40.7128, lng: -74.0060 }}
           isVisible={open}
