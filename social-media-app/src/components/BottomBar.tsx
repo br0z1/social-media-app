@@ -1,13 +1,27 @@
 import { Paper, Box, Typography, Fab } from '@mui/material';
+import { useState } from 'react';
+import LocationSelectModal from './LocationSelectModal';
 
 const BottomBar = () => {
   const BAR_HEIGHT = 56; // Match with Navbar height
   const BUTTON_SIZE = Math.round(BAR_HEIGHT * 0.8);
+  const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
+  const [locationText, setLocationText] = useState('NYC');
 
   return (
     <>
+      {/* Location Select Modal */}
+      <LocationSelectModal 
+        open={isLocationModalOpen}
+        onClose={() => setIsLocationModalOpen(false)}
+        onLocationSelect={(location) => {
+          setLocationText(location.displayName);
+        }}
+      />
+
       {/* Floating Button */}
       <Fab
+        onClick={() => setIsLocationModalOpen(true)}
         sx={{
           position: 'fixed',
           bottom: BAR_HEIGHT/2,
@@ -22,8 +36,23 @@ const BottomBar = () => {
             bgcolor: 'white',
           },
           zIndex: 1000,
+          padding: '4px', // Reduced padding from 8px to 4px to make image larger
+          minWidth: BUTTON_SIZE,
+          minHeight: BUTTON_SIZE,
         }}
-      />
+      >
+        <Box
+          component="img"
+          src="/little-logo.png"
+          alt=""
+          sx={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'contain',
+            display: 'block'
+          }}
+        />
+      </Fab>
 
       <Paper 
         sx={{ 
@@ -63,7 +92,7 @@ const BottomBar = () => {
               fontSize: '1.5rem',
             }}
           >
-            BEDSTUY, BK
+            {locationText}
           </Typography>
         </Box>
       </Paper>
