@@ -12,6 +12,7 @@ import BottomBar from './components/BottomBar';
 import CreatePostModal from './components/CreatePostModal';
 import 'leaflet/dist/leaflet.css';
 import { PostsProvider } from './context/PostsContext';
+import BetaAccessModal from './components/BetaAccessModal';
 
 // Create a theme instance
 const theme = createTheme({
@@ -60,6 +61,7 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
+      <BetaAccessModal />
       <PostsProvider>
         <Router>
           <Box sx={{ 
