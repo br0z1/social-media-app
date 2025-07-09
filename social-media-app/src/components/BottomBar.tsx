@@ -2,7 +2,11 @@ import { Paper, Box, Typography, Fab } from '@mui/material';
 import { useState } from 'react';
 import LocationSelectModal from './LocationSelectModal';
 
-const BottomBar = () => {
+interface BottomBarProps {
+  onSphereSelect: (location: { displayName: string; coordinates: { center: { lat: number; lng: number }; radius: number } }) => void;
+}
+
+const BottomBar = ({ onSphereSelect }: BottomBarProps) => {
   const BAR_HEIGHT = 56; // Match with Navbar height
   const BUTTON_SIZE = Math.round(BAR_HEIGHT * 0.8);
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
@@ -16,6 +20,7 @@ const BottomBar = () => {
         onClose={() => setIsLocationModalOpen(false)}
         onLocationSelect={(location) => {
           setLocationText(location.displayName);
+          onSphereSelect(location);
         }}
       />
 

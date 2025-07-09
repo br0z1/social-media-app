@@ -50,23 +50,49 @@ export const LocationMapSelector = React.memo(
       const containerRef = useRef<HTMLDivElement>(null);
       const [position, setPosition] = useState(defaultCenter);
       const initializationFlag = useRef(false);
+      const [currentZoom, setCurrentZoom] = useState<number>(13); // Default zoom level
 
-      // Function to get the current center coordinates
-      const getCurrentCenter = () => {
-        if (mapRef.current) {
-          const center = mapRef.current.getCenter();
-          return { lat: center.lat, lng: center.lng };
-        }
-        return position;
+      // Function to round coordinates based on zoom level
+      const roundCoordinates = (lat: number, lng: number, zoom: number): { lat: number; lng: number } => {
+        // Maximum precision: 6 decimal places (about 0.11 meters at equator)
+        const maxPrecision = 6;
+        
+        // Calculate precision based on zoom level
+        let precision;
+        if (zoom <= 5) precision = 0;      // World/continent view
+        else if (zoom <= 8) precision = 1; // Country/state view
+        else if (zoom <= 11) precision = 2; // City view
+        else if (zoom <= 14) precision = 3; // Neighborhood view
+        else if (zoom <= 16) precision = 4; // Street view
+        else if (zoom <= 18) precision = 5; // Building view
+        else precision = 6;                 // Maximum precision
+        
+        // Ensure we don't exceed max precision
+        precision = Math.min(precision, maxPrecision);
+        
+        // Round coordinates to calculated precision
+        const factor = Math.pow(10, precision);
+        const roundedLat = Math.round(lat * factor) / factor;
+        const roundedLng = Math.round(lng * factor) / factor;
+        
+        return {
+          lat: roundedLat,
+          lng: roundedLng
+        };
       };
 
-      // Expose getCurrentCenter to parent component
+      // Update getCurrentCenter to use rounded coordinates
       React.useImperativeHandle(ref, () => ({
-        getCurrentCenter
+        getCurrentCenter: () => {
+          if (mapRef.current) {
+            const center = mapRef.current.getCenter();
+            return roundCoordinates(center.lat, center.lng, currentZoom);
+          }
+          return { lat: 0, lng: 0 };
+        }
       }));
 
       useEffect(() => {
-        // Only initialize the map once
         if (!containerRef.current || initializationFlag.current || mapRef.current) return;
 
         console.log('🗺️ Initializing map for the first time');
@@ -87,12 +113,18 @@ export const LocationMapSelector = React.memo(
         const tileLayer = mapService.createTileLayer();
         tileLayer.addTo(map);
 
-        // Add moveend event listener
+        // Add moveend and zoomend event listeners
         map.on('moveend', () => {
           const center = map.getCenter();
           const newPosition = { lat: center.lat, lng: center.lng };
           setPosition(newPosition);
           onLocationSelect(newPosition);
+        });
+
+        // Add zoomend event listener
+        map.on('zoomend', () => {
+          const zoom = map.getZoom();
+          setCurrentZoom(zoom);
         });
 
         mapRef.current = map;

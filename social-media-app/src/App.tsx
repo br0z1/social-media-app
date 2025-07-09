@@ -13,6 +13,9 @@ import CreatePostModal from './components/CreatePostModal';
 import 'leaflet/dist/leaflet.css';
 import { PostsProvider } from './context/PostsContext';
 import BetaAccessModal from './components/BetaAccessModal';
+import Feed from './components/Feed';
+import type { Post as PostType } from './types';
+import { FeedManagerProvider } from './context/FeedManagerContext';
 
 // Create a theme instance
 const theme = createTheme({
@@ -57,54 +60,78 @@ const theme = createTheme({
 
 function App() {
   const [isCreatePostOpen, setIsCreatePostOpen] = useState(false);
+  const [selectedSphere, setSelectedSphere] = useState<string | null>(null);
+  const [sphereCoordinates, setSphereCoordinates] = useState<{
+    center: { lat: number; lng: number };
+    radius: number;
+  } | null>(null);
+
+  // Toggle closed-beta modal via env var
+  const betaEnabled = import.meta.env.VITE_BETA_ENABLED === 'true';
+
+  const handleSphereSelect = (location: { displayName: string; coordinates: { center: { lat: number; lng: number }; radius: number } }) => {
+    setSelectedSphere(location.displayName);
+    setSphereCoordinates(location.coordinates);
+  };
+
+  const experimentalFeedManagerEnabled = import.meta.env.VITE_FEED_MANAGER_ENABLED === 'true';
+
+  const AppShell = (
+    <Router>
+      <Box sx={{ 
+        display: 'flex', 
+        flexDirection: 'column', 
+        minHeight: '100vh',
+        width: '100vw',
+        bgcolor: 'background.default',
+      }}>
+        <Navbar onAddPost={() => setIsCreatePostOpen(true)} />
+        
+        <Box sx={{ 
+          flexGrow: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          mt: '56px', // Height of the navbar
+          mb: '56px', // Height of the bottom navigation
+          overflow: 'hidden', // Prevent double scrollbars
+        }}>
+          <Routes>
+            <Route path="/" element={
+              <Box sx={{ 
+                height: '100%',
+                overflow: 'auto',
+              }}>
+                <Feed 
+                  selectedSphere={selectedSphere} 
+                  sphereCoordinates={sphereCoordinates || undefined}
+                />
+              </Box>
+            } />
+            <Route path="/profile/:username" element={<Profile />} />
+            <Route path="/login" element={<Login />} />
+          </Routes>
+        </Box>
+
+        <CreatePostModal
+          open={isCreatePostOpen}
+          onClose={() => setIsCreatePostOpen(false)}
+        />
+
+        <BottomBar onSphereSelect={handleSphereSelect} />
+      </Box>
+    </Router>
+  );
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <BetaAccessModal />
+      {betaEnabled && <BetaAccessModal />}
       <PostsProvider>
-        <Router>
-          <Box sx={{ 
-            display: 'flex', 
-            flexDirection: 'column', 
-            minHeight: '100vh',
-            width: '100vw',
-            bgcolor: 'background.default',
-            pt: '56px', // Height of the navbar
-          }}>
-            <Navbar onAddPost={() => setIsCreatePostOpen(true)} />
-            <Container 
-              component="main" 
-              sx={{ 
-                flexGrow: 1,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                p: 2,
-                pb: 7,
-              }}
-              maxWidth={false}
-            >
-              <Box sx={{ 
-                width: '100%', 
-                maxWidth: 500,
-                margin: '0 auto',
-              }}>
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/profile/:username" element={<Profile />} />
-                  <Route path="/login" element={<Login />} />
-                </Routes>
-              </Box>
-            </Container>
-            <BottomBar />
-          </Box>
-
-          <CreatePostModal
-            open={isCreatePostOpen}
-            onClose={() => setIsCreatePostOpen(false)}
-          />
-        </Router>
+        {experimentalFeedManagerEnabled ? (
+          <FeedManagerProvider>{AppShell}</FeedManagerProvider>
+        ) : (
+          AppShell
+        )}
       </PostsProvider>
     </ThemeProvider>
   );

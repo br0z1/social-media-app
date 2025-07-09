@@ -150,43 +150,81 @@ export default function CreatePostModal({ open, onClose }: CreatePostModalProps)
     }
   };
 
-  const handleSubmit = async () => {
+  const generateFileName = (lat: number, lng: number, timestamp: string, hasMedia: boolean) => {
+    // Format coordinates: replace periods with 'p' and negatives with 'n'
+    const formatCoordinate = (coord: number) => {
+      const str = coord.toString();
+      return str.replace('.', 'p').replace('-', 'n');
+    };
+    
+    const formattedLat = formatCoordinate(lat);
+    const formattedLng = formatCoordinate(lng);
+    
+    // Format timestamp to HHMMSS_MMDD
+    const date = new Date(timestamp);
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const seconds = date.getSeconds().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    
+    const formattedTime = `${hours}${minutes}${seconds}_${month}${day}`;
+    
+    // Set engagement to low by default
+    const engagement = 'l';
+    
+    // Set file type indicator
+    const fileType = hasMedia ? 'm' : 't';
+    
+    // Set default file size
+    const fileSize = '1p5mb';
+    
+    return `${formattedLat}_${formattedLng}_${formattedTime}_${engagement}_${fileType}_${fileSize}`;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!content.trim()) return;
+
     try {
       setIsLoading(true);
-      const formData = new FormData();
-      
-      mediaFiles.forEach((file) => {
-        formData.append('media', file.file);
-      });
-      formData.append('content', content);
       
       // Get coordinates from the map
       const center = mapRef.current?.getCurrentCenter();
-      console.log('🎯 Raw coordinates from map:', center);
-      
-      if (center && typeof center.lat === 'number' && typeof center.lng === 'number') {
-        // Create location data with proper structure
-        const locationData = {
-          coordinates: {
-            lat: center.lat,
-            lng: center.lng
-          },
-          name: 'Current Location'  // Changed from 'Selected Location' to match existing pattern
-        };
-        
-        console.log('📍 Location data being sent:', locationData);
-        formData.append('location', JSON.stringify(locationData));
-      } else {
-        console.warn('⚠️ No valid coordinates available for post');
+      if (!center) {
+        throw new Error('Please select a location on the map');
       }
 
-      // Log the full form data
-      const locationJson = formData.get('location');
-      console.log('📦 Form data contents:', {
+      console.log('📍 Map coordinates:', center);
+
+      // Create form data
+      const formData = new FormData();
+      formData.append('content', content);
+      formData.append('coordinates', JSON.stringify({
+        lat: center.lat,
+        lng: center.lng
+      }));
+      
+      // Add media files if any
+      if (mediaFiles.length > 0) {
+        mediaFiles.forEach(file => {
+          console.log('📁 Adding media file:', file.file.name, file.file.type);
+          formData.append('media', file.file);
+        });
+      }
+
+      // Add author information (hardcoded for now)
+      formData.append('authorId', 'edgar');
+      formData.append('authorUsername', 'edgar');
+      formData.append('authorProfileImage', 'https://spheres-s3-media.s3.us-east-2.amazonaws.com/test-user/first-profile.jpg');
+      formData.append('subjectCategory', 'general');  // Add default subject category
+
+      console.log('📤 Sending request to:', `${API_URL}/api/posts`);
+      console.log('📝 Form data contents:', {
         content,
-        mediaFiles: mediaFiles.length,
-        hasLocation: !!locationJson,
-        locationData: locationJson ? JSON.parse(locationJson as string) : null
+        coordinates: { lat: center.lat, lng: center.lng },
+        mediaCount: mediaFiles.length,
+        authorId: 'edgar'
       });
 
       const response = await fetch(`${API_URL}/api/posts`, {
@@ -194,19 +232,27 @@ export default function CreatePostModal({ open, onClose }: CreatePostModalProps)
         body: formData,
       });
 
+      console.log('📥 Response status:', response.status);
+      
       if (!response.ok) {
         const errorData = await response.json();
+        console.error('❌ Error response:', errorData);
         throw new Error(errorData.error || 'Failed to create post');
       }
 
       const responseData = await response.json();
       console.log('✅ Post created successfully:', responseData);
-
-      await refreshPosts();
-      handleClose();
-    } catch (error: any) {
+      
+      // Refresh posts and close modal
+      refreshPosts();
+      onClose();
+      
+      // Clear form
+      setContent('');
+      setMediaFiles([]);
+    } catch (error) {
       console.error('❌ Error creating post:', error);
-      alert('Failed to create post: ' + error.message);
+      alert(error instanceof Error ? error.message : 'Failed to create post');
     } finally {
       setIsLoading(false);
     }

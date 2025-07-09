@@ -12,18 +12,34 @@ export interface MediaFile {
 }
 
 export interface Post {
-  id: string;
-  author: {
-    id: string;
-    username: string;
-    profileImage: string; // URL to the image
+  partitionKey: string;
+  sortKey: number;
+  authorKey: string;
+  engagementKey: number;
+  mediaTypeKey: number;
+  categoryKey: number;
+  postId: string;
+  content: string;
+  coordinates: {
+    lat: number;
+    lng: number;
   };
-  content?: string;
-  mediaFiles?: MediaFile[];
-  likes: number;
-  comments: any[]; // Array of comment objects
-  location?: Location;
-  timestamp: string; // ISO string format
+  authorId: string;
+  authorUsername: string;
+  authorProfileImage?: string;
+  mediaUrl?: string;
+  timestamp: string;
+  createdAt: string;
+  updatedAt: string;
+  type: 'text' | 'media';
+  contentType: string;
+  engagement: {
+    likes: number;
+    comments: number;
+    shares: number;
+    views: number;
+    commentCount?: number;
+  };
 }
 
 export interface User {

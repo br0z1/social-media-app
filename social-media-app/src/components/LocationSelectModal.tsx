@@ -96,7 +96,7 @@ const LocationLabel = styled(Box)({
 interface LocationSelectModalProps {
   open: boolean;
   onClose: () => void;
-  onLocationSelect?: (location: { coordinates: { lat: number; lng: number }, radius: number, displayName: string }) => void;
+  onLocationSelect: (location: { displayName: string; coordinates: { center: { lat: number; lng: number }; radius: number } }) => void;
 }
 
 export default function LocationSelectModal({ open, onClose, onLocationSelect }: LocationSelectModalProps) {
@@ -262,24 +262,28 @@ export default function LocationSelectModal({ open, onClose, onLocationSelect }:
     };
   }, [open, initializeMap]);
 
-  const handleClose = () => {
+  const handleLocationSelect = () => {
     if (mapRef.current) {
       const center = mapRef.current.getCenter();
-      const location = {
-        coordinates: { lat: center.lat, lng: center.lng },
-        radius: calculateRealWorldRadius(),
-        displayName: formatLocationDisplay(neighborhoodInfo, currentZoomRef.current)
-      };
-      console.log('Selected location:', location);
-      onLocationSelect?.(location);
+      const radius = 5000; // 5km radius
+      onLocationSelect({
+        displayName: neighborhood,
+        coordinates: {
+          center: {
+            lat: center.lat,
+            lng: center.lng
+          },
+          radius
+        }
+      });
+      onClose();
     }
-    onClose();
   };
 
   return (
     <Modal
       open={open}
-      onClose={handleClose}
+      onClose={handleLocationSelect}
       aria-labelledby="modal-title"
     >
       <ModalContainer>
@@ -288,7 +292,7 @@ export default function LocationSelectModal({ open, onClose, onLocationSelect }:
             Choose Your Sphere
           </Typography>
           <IconButton 
-            onClick={handleClose}
+            onClick={handleLocationSelect}
             size="small"
             sx={{ color: 'black' }}
           >
