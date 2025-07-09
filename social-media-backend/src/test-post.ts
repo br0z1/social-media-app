@@ -1,6 +1,7 @@
 import { createPost } from './services/posts';
 import fs from 'fs';
 import path from 'path';
+import { Readable } from 'stream';
 
 async function testPostCreation() {
     try {
@@ -17,18 +18,18 @@ async function testPostCreation() {
             },
             authorId: 'test-user-123',
             authorUsername: 'testuser',
-            mediaFiles: [{
+            mediaFile: {
                 buffer: imageBuffer,
                 originalname: 'test-image.jpg',
                 mimetype: 'image/jpeg',
                 fieldname: 'media',
                 encoding: '7bit',
                 size: imageBuffer.length,
-                stream: null,
+                stream: Readable.from(imageBuffer),
                 destination: '',
                 filename: 'test-image.jpg',
                 path: imagePath
-            } as any]
+            } as unknown as Express.Multer.File
         });
         
         console.log('Post created successfully:', post);
