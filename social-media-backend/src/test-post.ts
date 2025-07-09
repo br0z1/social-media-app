@@ -12,8 +12,8 @@ async function testPostCreation() {
         const post = await createPost({
             content: 'Test post with image',
             coordinates: {
-                latitude: 40.7128,
-                longitude: -74.0060
+                lat: 40.7128,
+                lng: -74.0060
             },
             authorId: 'test-user-123',
             authorUsername: 'testuser',
