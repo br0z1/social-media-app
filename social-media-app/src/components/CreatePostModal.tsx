@@ -150,7 +150,7 @@ export default function CreatePostModal({ open, onClose }: CreatePostModalProps)
     }
   };
 
-  const generateFileName = (lat: number, lng: number, timestamp: string, hasMedia: boolean) => {
+  const _generateFileName = (lat: number, lng: number, timestamp: string, hasMedia: boolean) => {
     // Format coordinates: replace periods with 'p' and negatives with 'n'
     const formatCoordinate = (coord: number) => {
       const str = coord.toString();

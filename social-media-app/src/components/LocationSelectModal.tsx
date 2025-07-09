@@ -4,7 +4,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { styled } from '@mui/material/styles';
-import { getNeighborhoodFromCoordinates, formatLocationDisplay, NeighborhoodInfo } from '../data/nycNeighborhoods';
+import { getNeighborhoodFromCoordinates, // formatLocationDisplay, NeighborhoodInfo } from '../data/nycNeighborhoods';
 import MapTileService from '../services/mapTileService';
 
 // Custom debounce function
@@ -106,10 +106,10 @@ export default function LocationSelectModal({ open, onClose, onLocationSelect }:
   const [initAttempts, setInitAttempts] = useState(0);
   const currentZoomRef = useRef(13);
   const [tileWarning, setTileWarning] = useState(false);
-  const [neighborhoodInfo, setNeighborhoodInfo] = useState<NeighborhoodInfo | null>(null);
+  const [, setNeighborhoodInfo] = useState<NeighborhoodInfo | null>(null);
   
   // Calculate the visual radius in meters based on the screen circle
-  const calculateRealWorldRadius = () => {
+  const _calculateRealWorldRadius = () => {
     if (!mapRef.current) return CIRCLE_RADIUS;
     return CIRCLE_RADIUS;
   };

@@ -19,7 +19,7 @@ const BackdropOverlay = styled(Box)({
   zIndex: 1300,
 });
 
-const CommentContainer = styled(Paper)(({ theme }) => ({
+const CommentContainer = styled(Paper)(({ theme: _theme }) => ({
   width: 'min(85%, 480px)', // Same width as posts
   height: '60vh',
   backgroundColor: 'white',
@@ -32,7 +32,7 @@ const CommentContainer = styled(Paper)(({ theme }) => ({
   overflow: 'hidden',
 }));
 
-const CommentHeader = styled(Box)(({ theme }) => ({
+const CommentHeader = styled(Box)(({ theme: _theme }) => ({
   padding: theme.spacing(2),
   borderBottom: '1px solid #e0e0e0',
   display: 'flex',
@@ -40,7 +40,7 @@ const CommentHeader = styled(Box)(({ theme }) => ({
   alignItems: 'center',
 }));
 
-const CommentInputSection = styled(Box)(({ theme }) => ({
+const CommentInputSection = styled(Box)(({ theme: _theme }) => ({
   padding: theme.spacing(2),
   borderBottom: '1px solid #e0e0e0',
   display: 'flex',
@@ -48,7 +48,7 @@ const CommentInputSection = styled(Box)(({ theme }) => ({
   alignItems: 'center',
 }));
 
-const CommentInputField = styled(TextField)(({ theme }) => ({
+const CommentInputField = styled(TextField)(({ theme: _theme }) => ({
   flexGrow: 1,
   '& .MuiOutlinedInput-root': {
     borderRadius: '20px',
@@ -65,7 +65,7 @@ const CommentInputField = styled(TextField)(({ theme }) => ({
   },
 }));
 
-const SendButton = styled(IconButton)(({ theme }) => ({
+const SendButton = styled(IconButton)(({ theme: _theme }) => ({
   backgroundColor: '#8BC2A9',
   color: 'white',
   '&:hover': {
@@ -77,7 +77,7 @@ const SendButton = styled(IconButton)(({ theme }) => ({
   },
 }));
 
-const CommentsSection = styled(Box)(({ theme }) => ({
+const CommentsSection = styled(Box)(({ theme: _theme }) => ({
   flexGrow: 1,
   padding: theme.spacing(2),
   overflow: 'auto',
@@ -86,7 +86,7 @@ const CommentsSection = styled(Box)(({ theme }) => ({
   gap: theme.spacing(2),
 }));
 
-const CommentItem = styled(Box)(({ theme }) => ({
+const CommentItem = styled(Box)(({ theme: _theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   gap: theme.spacing(1),
@@ -95,24 +95,24 @@ const CommentItem = styled(Box)(({ theme }) => ({
   backgroundColor: '#f9f9f9',
 }));
 
-const CommentItemHeader = styled(Box)(({ theme }) => ({
+const CommentItemHeader = styled(Box)(({ theme: _theme }) => ({
   display: 'flex',
   alignItems: 'center',
   gap: theme.spacing(1),
 }));
 
-const CommentContent = styled(Box)(({ theme }) => ({
+const CommentContent = styled(Box)(({ theme: _theme }) => ({
   marginLeft: theme.spacing(5), // Align with username
 }));
 
-const CommentActions = styled(Box)(({ theme }) => ({
+const CommentActions = styled(Box)(({ theme: _theme }) => ({
   display: 'flex',
   alignItems: 'center',
   gap: theme.spacing(2),
   marginLeft: theme.spacing(5), // Align with username
 }));
 
-const ReplyButton = styled(Button)(({ theme }) => ({
+const ReplyButton = styled(Button)(({ theme: _theme }) => ({
   textTransform: 'none',
   color: theme.palette.text.secondary,
   fontSize: '0.875rem',
@@ -124,7 +124,7 @@ const ReplyButton = styled(Button)(({ theme }) => ({
   },
 }));
 
-const EmptyCommentsContainer = styled(Box)(({ theme }) => ({
+const EmptyCommentsContainer = styled(Box)(({ theme: _theme }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -132,7 +132,7 @@ const EmptyCommentsContainer = styled(Box)(({ theme }) => ({
   flexGrow: 1,
 }));
 
-const NoCommentsText = styled(Typography)(({ theme }) => ({
+const NoCommentsText = styled(Typography)(({ theme: _theme }) => ({
   color: theme.palette.text.secondary,
   fontStyle: 'italic',
   textAlign: 'center',

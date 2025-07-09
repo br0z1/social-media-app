@@ -48,7 +48,7 @@ export const LocationMapSelector = React.memo(
     ({ onLocationSelect, defaultCenter, isVisible = true }, ref) => {
       const mapRef = useRef<L.Map | null>(null);
       const containerRef = useRef<HTMLDivElement>(null);
-      const [position, setPosition] = useState(defaultCenter);
+      const [, setPosition] = useState(defaultCenter);
       const initializationFlag = useRef(false);
       const [currentZoom, setCurrentZoom] = useState<number>(13); // Default zoom level
 

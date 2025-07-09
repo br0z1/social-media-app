@@ -33,7 +33,7 @@ export class FeedManager {
   }
 
   // Public methods
-  public async initialize(sphereId: string) {
+  public async initialize(// sphereId: string) {
     this.isActive = true;
     this.resetState();
     await this.checkAndRefillOnDeck();
@@ -101,7 +101,7 @@ export class FeedManager {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            sphereId: this.userSphere?.id,
+            // sphereId: this.userSphere?.id,
             count: needed
           })
         });
@@ -155,7 +155,7 @@ export class FeedManager {
     try {
       const posts = await this.postService.fetchPosts(postsToPreload);
       for (const post of posts) {
-        this.postCache.set(post['post-id'], post);
+        this.postCache.set(post.postId || post.id, post);
       }
       this.emit('newPosts', posts);
     } catch (error) {

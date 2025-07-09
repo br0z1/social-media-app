@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
-import Container from '@mui/material/Container';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Profile from './pages/Profile';
@@ -14,7 +13,6 @@ import 'leaflet/dist/leaflet.css';
 import { PostsProvider } from './context/PostsContext';
 import BetaAccessModal from './components/BetaAccessModal';
 import Feed from './components/Feed';
-import type { Post as PostType } from './types';
 import { FeedManagerProvider } from './context/FeedManagerContext';
 
 // Create a theme instance
