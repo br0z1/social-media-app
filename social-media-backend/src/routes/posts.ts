@@ -117,6 +117,14 @@ router.post('/', upload.single('media'), async (req: Request, res: Response): Pr
             return;
         }
 
+        // Verify AWS configuration
+        console.log('🔍 Checking AWS configuration:', {
+            region: process.env.AWS_REGION || 'us-east-2',
+            hasAccessKey: !!process.env.AWS_ACCESS_KEY_ID,
+            hasSecretKey: !!process.env.AWS_SECRET_ACCESS_KEY,
+            tableName: process.env.DYNAMODB_TABLE_NAME
+        });
+
         console.log('📤 Sending data to createPost:', {
             content,
             coordinates: parsedCoordinates,
@@ -139,9 +147,18 @@ router.post('/', upload.single('media'), async (req: Request, res: Response): Pr
 
         console.log('✅ Post created successfully');
         res.status(201).json(post);
-    } catch (error) {
+    } catch (error: any) {
         console.error('❌ Error in post route:', error);
-        res.status(500).json({ error: 'Failed to create post' });
+        // Enhanced error reporting
+        const errorResponse = {
+            error: 'Failed to create post',
+            details: error.message,
+            code: error.code,
+            time: new Date().toISOString(),
+            requestId: error.$metadata?.requestId
+        };
+        console.error('📝 Detailed error:', errorResponse);
+        res.status(500).json(errorResponse);
     }
 });
 
