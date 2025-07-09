@@ -33,7 +33,7 @@ export class FeedManager {
   }
 
   // Public methods
-  public async initialize(// sphereId: string) {
+  public async initialize(/* sphereId: string */) {
     this.isActive = true;
     this.resetState();
     await this.checkAndRefillOnDeck();

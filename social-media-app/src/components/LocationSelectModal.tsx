@@ -4,7 +4,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { styled } from '@mui/material/styles';
-import { getNeighborhoodFromCoordinates, // formatLocationDisplay, NeighborhoodInfo } from '../data/nycNeighborhoods';
+import { getNeighborhoodFromCoordinates, /* formatLocationDisplay, */ NeighborhoodInfo } from '../data/nycNeighborhoods';
 import MapTileService from '../services/mapTileService';
 
 // Custom debounce function
