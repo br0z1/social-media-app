@@ -4,7 +4,6 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
 import Navbar from './components/Navbar';
-import Home from './pages/Home';
 import Profile from './pages/Profile';
 import Login from './pages/Login';
 import BottomBar from './components/BottomBar';

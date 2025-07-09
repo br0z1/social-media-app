@@ -33,7 +33,7 @@ const CommentContainer = styled(Paper)(({ theme: _theme }) => ({
 }));
 
 const CommentHeader = styled(Box)(({ theme: _theme }) => ({
-  padding: theme.spacing(2),
+  padding: _theme.spacing(2),
   borderBottom: '1px solid #e0e0e0',
   display: 'flex',
   justifyContent: 'space-between',
@@ -41,10 +41,10 @@ const CommentHeader = styled(Box)(({ theme: _theme }) => ({
 }));
 
 const CommentInputSection = styled(Box)(({ theme: _theme }) => ({
-  padding: theme.spacing(2),
+  padding: _theme.spacing(2),
   borderBottom: '1px solid #e0e0e0',
   display: 'flex',
-  gap: theme.spacing(1),
+  gap: _theme.spacing(1),
   alignItems: 'center',
 }));
 
@@ -79,18 +79,18 @@ const SendButton = styled(IconButton)(({ theme: _theme }) => ({
 
 const CommentsSection = styled(Box)(({ theme: _theme }) => ({
   flexGrow: 1,
-  padding: theme.spacing(2),
+  padding: _theme.spacing(2),
   overflow: 'auto',
   display: 'flex',
   flexDirection: 'column',
-  gap: theme.spacing(2),
+  gap: _theme.spacing(2),
 }));
 
 const CommentItem = styled(Box)(({ theme: _theme }) => ({
   display: 'flex',
   flexDirection: 'column',
-  gap: theme.spacing(1),
-  padding: theme.spacing(1),
+  gap: _theme.spacing(1),
+  padding: _theme.spacing(1),
   borderRadius: '8px',
   backgroundColor: '#f9f9f9',
 }));
@@ -98,29 +98,29 @@ const CommentItem = styled(Box)(({ theme: _theme }) => ({
 const CommentItemHeader = styled(Box)(({ theme: _theme }) => ({
   display: 'flex',
   alignItems: 'center',
-  gap: theme.spacing(1),
+  gap: _theme.spacing(1),
 }));
 
 const CommentContent = styled(Box)(({ theme: _theme }) => ({
-  marginLeft: theme.spacing(5), // Align with username
+  marginLeft: _theme.spacing(5), // Align with username
 }));
 
 const CommentActions = styled(Box)(({ theme: _theme }) => ({
   display: 'flex',
   alignItems: 'center',
-  gap: theme.spacing(2),
-  marginLeft: theme.spacing(5), // Align with username
+  gap: _theme.spacing(2),
+  marginLeft: _theme.spacing(5), // Align with username
 }));
 
 const ReplyButton = styled(Button)(({ theme: _theme }) => ({
   textTransform: 'none',
-  color: theme.palette.text.secondary,
+  color: _theme.palette.text.secondary,
   fontSize: '0.875rem',
   padding: '2px 8px',
   minWidth: 'auto',
   '&:hover': {
     backgroundColor: 'transparent',
-    color: theme.palette.primary.main,
+    color: _theme.palette.primary.main,
   },
 }));
 
@@ -133,7 +133,7 @@ const EmptyCommentsContainer = styled(Box)(({ theme: _theme }) => ({
 }));
 
 const NoCommentsText = styled(Typography)(({ theme: _theme }) => ({
-  color: theme.palette.text.secondary,
+  color: _theme.palette.text.secondary,
   fontStyle: 'italic',
   textAlign: 'center',
 }));

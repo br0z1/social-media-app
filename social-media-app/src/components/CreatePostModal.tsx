@@ -150,37 +150,6 @@ export default function CreatePostModal({ open, onClose }: CreatePostModalProps)
     }
   };
 
-  const _generateFileName = (lat: number, lng: number, timestamp: string, hasMedia: boolean) => {
-    // Format coordinates: replace periods with 'p' and negatives with 'n'
-    const formatCoordinate = (coord: number) => {
-      const str = coord.toString();
-      return str.replace('.', 'p').replace('-', 'n');
-    };
-    
-    const formattedLat = formatCoordinate(lat);
-    const formattedLng = formatCoordinate(lng);
-    
-    // Format timestamp to HHMMSS_MMDD
-    const date = new Date(timestamp);
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    const seconds = date.getSeconds().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
-    
-    const formattedTime = `${hours}${minutes}${seconds}_${month}${day}`;
-    
-    // Set engagement to low by default
-    const engagement = 'l';
-    
-    // Set file type indicator
-    const fileType = hasMedia ? 'm' : 't';
-    
-    // Set default file size
-    const fileSize = '1p5mb';
-    
-    return `${formattedLat}_${formattedLng}_${formattedTime}_${engagement}_${fileType}_${fileSize}`;
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

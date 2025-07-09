@@ -11,8 +11,6 @@ export class FeedManager {
   private isStationary = false;
   private inactivityTimer: NodeJS.Timeout | null = null;
   private consecutiveEmptyQueries = 0;
-  private userSphere: { id: string } | null = null;
-
   // Constants
   private readonly MAX_ON_DECK = 7;
   private readonly MAX_CACHE_SIZE = 20;
@@ -165,10 +163,6 @@ export class FeedManager {
 
   private async getVisiblePostCount(): Promise<number> {
     return this.visibleRange ? this.visibleRange.end - this.visibleRange.start + 1 : 0;
-  }
-
-  private async fetchPost(postId: string): Promise<Post | null> {
-    return this.postService.fetchPost(postId);
   }
 
   private async cleanupCache() {

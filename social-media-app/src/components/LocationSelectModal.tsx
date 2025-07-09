@@ -108,11 +108,6 @@ export default function LocationSelectModal({ open, onClose, onLocationSelect }:
   const [tileWarning, setTileWarning] = useState(false);
   const [, setNeighborhoodInfo] = useState<NeighborhoodInfo | null>(null);
   
-  // Calculate the visual radius in meters based on the screen circle
-  const _calculateRealWorldRadius = () => {
-    if (!mapRef.current) return CIRCLE_RADIUS;
-    return CIRCLE_RADIUS;
-  };
 
   const updateNeighborhood = useCallback(
     debounce(async (center: L.LatLng) => {
