@@ -171,7 +171,7 @@ export class FeedManager {
     if (!visibleRange) return;
 
     // Remove posts that are more than one post away from the visible range
-    for (const [postId, post] of this.postCache.entries()) {
+    for (const [postId] of this.postCache.entries()) {
       const postIndex = this.sessionIDList.indexOf(postId);
       if (postIndex === -1) continue;
 

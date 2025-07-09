@@ -20,7 +20,6 @@ function debounce<T extends (...args: any[]) => any>(
   };
 }
 
-const CIRCLE_RADIUS = 500; // 500 meters radius in real world
 const ZOOM_THRESHOLD = 12; // Zoom level at which we switch from borough to neighborhood
 
 const ModalContainer = styled(Box)({
